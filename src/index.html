@@ -1,0 +1,38 @@
+<html>
+
+  <head>
+    <title>Astrosmash Phaser</title>
+    <script src="js/phaser.min.js"></script>
+    <script src="js/game.js"></script>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            text-align: center;
+        }
+
+        a {
+            color: #fff;
+        }
+
+        canvas {
+            margin: auto;
+            width: 1024px;
+            height: 768px;
+            image-rendering: -moz-crisp-edges;         /* Firefox */
+            image-rendering:   -o-crisp-edges;         /* Opera */
+            image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
+            image-rendering: crisp-edges;
+            border: 2px solid #fff;
+        }
+    </style>
+  </head>
+  <body>
+    <script>
+        var game = new Phaser.Game(1024,768, Phaser.AUTO);
+        game.state.add('game', Game);
+        game.state.start('game');
+    </script>
+  </body>
+
+</html>

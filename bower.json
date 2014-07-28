@@ -1,0 +1,19 @@
+{
+  "name": "damnation_alley",
+  "version": "0.0.0",
+  "authors": [
+    "Brian Kelly <polymonic@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "phaser-official": "~2.0.7"
+  }
+}
