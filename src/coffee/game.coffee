@@ -12,6 +12,7 @@ class Game
     @game.load.image('laserblast', 'img/laser_blast.png')
     @game.load.image('asteroid', 'img/asteroid.png')
     @game.load.image('background', 'img/background.png')
+    @game.load.image('ground', 'img/ground_trigger.png')
     @game.load.audio('laser', 'audio/laser_blast.wav')
     @game.load.audio('explosion', 'audio/explosion.wav')
     @game.load.audio('music', 'audio/music.mp3')
@@ -19,9 +20,13 @@ class Game
   create: ->
     game.add.sprite(0, 0, 'background')
     @game.physics.startSystem(Phaser.Physics.ARCADE);
+
     @player = game.add.sprite(512,768-96, 'player')
     @game.physics.enable(@player)
     @player.body.collideWorldBounds = true
+
+    @ground = game.add.sprite(0, 760, 'ground')
+    @game.physics.enable(@ground)
 
     @cursors = @game.input.keyboard.createCursorKeys()
 
@@ -45,9 +50,9 @@ class Game
 
   update: ->
     if (@cursors.left.isDown)
-      @player.body.velocity.x = -256
+      @player.body.velocity.x = -192
     else if (@cursors.right.isDown)
-      @player.body.velocity.x = 256
+      @player.body.velocity.x = 192
     else
       @player.body.velocity.x = 0
 
@@ -70,12 +75,18 @@ class Game
       asteroid.outOfBoundsKill = true
 
     game.physics.arcade.overlap(@lasers, @asteroids, @collisionHandler, null, this);
+    game.physics.arcade.overlap(@ground, @asteroids, @groundHandler, null, this);
 
   collisionHandler: (laser, asteroid) ->
     laser.kill()
     asteroid.kill()
     @explosion.play()
     @score += 100
+    @scoreText.text = "Score: " + @score
+
+  groundHandler: (ground, asteroid) ->
+    asteroid.kill()
+    @score -= 100
     @scoreText.text = "Score: " + @score
 
 exports.Game = Game
