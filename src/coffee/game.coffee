@@ -5,6 +5,7 @@ class Game
   constructor: (@game) ->
     @player = null
     @BLAST_DELAY = 400
+    @score = 0
 
   preload: ->
     @game.load.image('player', 'img/spaceship.png')
@@ -40,6 +41,8 @@ class Game
 
     @lastBlastShotAt = 0
 
+    @scoreText = @game.add.text(8, 8, "Score: 0", {fill: "#ffffff"})
+
   update: ->
     if (@cursors.left.isDown)
       @player.body.velocity.x = -256
@@ -72,5 +75,7 @@ class Game
     laser.kill()
     asteroid.kill()
     @explosion.play()
+    @score += 100
+    @scoreText.text = "Score: " + @score
 
 exports.Game = Game
