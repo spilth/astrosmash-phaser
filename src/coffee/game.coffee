@@ -47,6 +47,9 @@ class Game
     if @cursors.up.isDown
       blast = @lasers.create(@player.x + 32, 768-96-20, 'laserblast')
       blast.body.velocity.y = -256
+      blast.checkWorldBounds = true
+      blast.outOfBoundsKill = true
+
       @blast.play()
 
     if Math.random() < 0.01
@@ -55,6 +58,8 @@ class Game
       asteroid = @asteroids.create(x, 0, 'asteroid')
       asteroid.body.velocity.y = 128
       asteroid.body.velocity.x = xVelocity
+      asteroid.checkWorldBounds = true
+      asteroid.outOfBoundsKill = true
 
     game.physics.arcade.overlap(@lasers, @asteroids, @collisionHandler, null, this);
 
