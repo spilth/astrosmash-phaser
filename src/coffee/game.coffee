@@ -75,6 +75,8 @@ class Game
       asteroid.outOfBoundsKill = true
       asteroid.anchor.setTo(0.5, 0.5);
       asteroid.body.angularVelocity = Math.floor(Math.random() * 128) + 1 - 64
+      colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0x00ffff, 0xff00ff]
+      asteroid.tint = colors[Math.floor(Math.random() * colors.length)]
 
     game.physics.arcade.overlap(@lasers, @asteroids, @collisionHandler, null, this);
     game.physics.arcade.overlap(@ground, @asteroids, @groundHandler, null, this);
