@@ -1,8 +1,10 @@
 exports = this
 
 class Game
+
   constructor: (@game) ->
     @player = null
+    @BLAST_DELAY = 400
 
   preload: ->
     @game.load.image('player', 'img/spaceship.png')
@@ -36,6 +38,8 @@ class Game
     @music = @game.add.sound('music', 1, true)
     @music.play()
 
+    @lastBlastShotAt = 0
+
   update: ->
     if (@cursors.left.isDown)
       @player.body.velocity.x = -256
@@ -45,12 +49,13 @@ class Game
       @player.body.velocity.x = 0
 
     if @cursors.up.isDown
-      blast = @lasers.create(@player.x + 32, 768-96-20, 'laserblast')
-      blast.body.velocity.y = -256
-      blast.checkWorldBounds = true
-      blast.outOfBoundsKill = true
-
-      @blast.play()
+      unless (this.game.time.now - @lastBlastShotAt < @BLAST_DELAY)
+        blast = @lasers.create(@player.x + 32, 768-96-20, 'laserblast')
+        blast.body.velocity.y = -256
+        blast.checkWorldBounds = true
+        blast.outOfBoundsKill = true
+        @blast.play()
+        @lastBlastShotAt = this.game.time.now;
 
     if Math.random() < 0.01
       x = Math.floor(Math.random() * 1024) + 1
@@ -67,6 +72,5 @@ class Game
     laser.kill()
     asteroid.kill()
     @explosion.play()
-
 
 exports.Game = Game
