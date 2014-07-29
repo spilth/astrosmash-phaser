@@ -73,6 +73,8 @@ class Game
       asteroid.body.velocity.x = xVelocity
       asteroid.checkWorldBounds = true
       asteroid.outOfBoundsKill = true
+      asteroid.anchor.setTo(0.5, 0.5);
+      asteroid.body.angularVelocity = Math.floor(Math.random() * 128) + 1 - 64
 
     game.physics.arcade.overlap(@lasers, @asteroids, @collisionHandler, null, this);
     game.physics.arcade.overlap(@ground, @asteroids, @groundHandler, null, this);
