@@ -7,7 +7,7 @@ class Game
     @score = 0
 
   create: ->
-    game.add.sprite(0, 0, 'background')
+    @game.add.sprite(0, 0, 'background')
     @game.physics.startSystem(Phaser.Physics.ARCADE);
 
     @player = game.add.sprite(512,768-96, 'player')
@@ -18,6 +18,7 @@ class Game
     @game.physics.enable(@ground)
 
     @cursors = @game.input.keyboard.createCursorKeys()
+    @spacebar = @game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 
     @asteroids = game.add.group()
     @asteroids.enableBody = true
@@ -45,7 +46,7 @@ class Game
     else
       @player.body.velocity.x = 0
 
-    if @cursors.up.isDown
+    if @spacebar.isDown
       unless (this.game.time.now - @lastBlastShotAt < @BLAST_DELAY)
         blast = @lasers.create(@player.x + 32, 768-96-20, 'laserblast')
         blast.body.velocity.y = -256

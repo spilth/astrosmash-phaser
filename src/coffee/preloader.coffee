@@ -16,12 +16,9 @@ class Preloader
     @game.load.onFileComplete.add(@fileLoaded, this);
 
   create: ->
-    @game.state.start('game')
-
-    @loadText = @game.add.text(8, 8, "Loaded: 0%", {fill: "#ffffff"})
+    @game.state.start('menu')
 
   fileLoaded: (percentage) ->
     @loadText.text = "Loaded: " + percentage + "%"
-    console.log('file loaded: ' + percentage)
 
 exports.Preloader = Preloader
