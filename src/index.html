@@ -3,6 +3,8 @@
   <head>
     <title>Astrosmash Phaser</title>
     <script src="js/phaser.min.js"></script>
+    <script src="js/boot.js"></script>
+    <script src="js/preloader.js"></script>
     <script src="js/game.js"></script>
     <style>
         body {
@@ -31,8 +33,10 @@
     <p><a href="https://github.com/spilth/astrosmash-phaser">https://github.com/spilth/astrosmash-phaser</a></p>
     <script>
         var game = new Phaser.Game(1024,768, Phaser.AUTO);
+        game.state.add('boot', Boot);
+        game.state.add('preloader', Preloader);
         game.state.add('game', Game);
-        game.state.start('game');
+        game.state.start('boot');
     </script>
   </body>
 

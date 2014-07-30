@@ -1,21 +1,10 @@
 exports = this
 
 class Game
-
   constructor: (@game) ->
     @player = null
     @BLAST_DELAY = 400
     @score = 0
-
-  preload: ->
-    @game.load.image('player', 'img/spaceship.png')
-    @game.load.image('laserblast', 'img/laser_blast.png')
-    @game.load.image('asteroid', 'img/asteroid.png')
-    @game.load.image('background', 'img/background.png')
-    @game.load.image('ground', 'img/ground_trigger.png')
-    @game.load.audio('laser', 'audio/laser_blast.wav')
-    @game.load.audio('explosion', 'audio/explosion.wav')
-    @game.load.audio('music', 'audio/music.mp3')
 
   create: ->
     game.add.sprite(0, 0, 'background')

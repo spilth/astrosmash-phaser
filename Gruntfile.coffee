@@ -11,9 +11,12 @@ module.exports = (grunt) ->
 
     coffee:
       compile:
-        files: {
-          'dist/js/game.js': 'src/coffee/game.coffee'
-        }
+        expand: true
+        flatten: false
+        cwd: 'src/coffee/'
+        src: ['*.coffee']
+        dest: 'dist/js'
+        ext: '.js'
 
     copy:
       dist:
