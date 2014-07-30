@@ -9,6 +9,7 @@ class Preloader
     @game.load.image('ground', 'img/ground_trigger.png')
     @game.load.audio('laser', 'audio/laser_blast.wav')
     @game.load.audio('explosion', 'audio/explosion.wav')
+    @game.load.audio('death', 'audio/death.wav')
     @game.load.audio('music', 'audio/music.mp3')
 
     @loadText = @game.add.text(8, 8, "Loaded: 0%", {fill: "#ffffff"})

@@ -7,6 +7,7 @@
     <script src="js/preloader.js"></script>
     <script src="js/menu.js"></script>
     <script src="js/game.js"></script>
+    <script src="js/game_over.js"></script>
     <style>
         body {
             background: #000;
@@ -38,6 +39,7 @@
         game.state.add('preloader', Preloader);
         game.state.add('menu', Menu);
         game.state.add('game', Game);
+        game.state.add('game_over', GameOver);
         game.state.start('boot');
     </script>
   </body>

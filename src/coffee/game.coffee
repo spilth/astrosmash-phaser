@@ -30,6 +30,7 @@ class Game
 
     @blast = @game.add.sound('laser')
     @explosion = @game.add.sound('explosion')
+    @playerDeath = @game.add.sound('death')
 
     @music = @game.add.sound('music', 1, true)
     @music.play()
@@ -70,6 +71,7 @@ class Game
 
     game.physics.arcade.overlap(@lasers, @asteroids, @collisionHandler, null, this);
     game.physics.arcade.overlap(@ground, @asteroids, @groundHandler, null, this);
+    game.physics.arcade.overlap(@player, @asteroids, @death, null, this);
 
   collisionHandler: (laser, asteroid) ->
     laser.kill()
@@ -82,5 +84,10 @@ class Game
     asteroid.kill()
     @score -= 100
     @scoreText.text = "Score: " + @score
+
+  death: (player, asteroid) ->
+    @playerDeath.play()
+    @music.stop()
+    @game.state.start('game_over')
 
 exports.Game = Game
