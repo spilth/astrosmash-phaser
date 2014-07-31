@@ -5,6 +5,7 @@ class Game
     @player = null
     @BLAST_DELAY = 400
     @score = 0
+    @lives = 3
 
   create: ->
     @game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -39,6 +40,7 @@ class Game
     @lastBlastShotAt = 0
 
     @scoreText = @game.add.text(8, 8, "Score: 0", {fill: "#ffffff"})
+    @livesText = @game.add.text(896, 8, "Lives: 3", {fill: "#ffffff"})
 
     @checkLevel()
 
@@ -57,9 +59,9 @@ class Game
     if Math.random() < 0.01
       @spawnAsteroid()
 
-    game.physics.arcade.overlap(@lasers, @asteroids, @collisionHandler, null, this);
-    game.physics.arcade.overlap(@ground, @asteroids, @groundHandler, null, this);
-    game.physics.arcade.overlap(@player, @asteroids, @death, null, this);
+    @game.physics.arcade.overlap(@lasers, @asteroids, @collisionHandler, null, this);
+    @game.physics.arcade.overlap(@ground, @asteroids, @groundHandler, null, this);
+    @game.physics.arcade.overlap(@player, @asteroids, @death, null, this);
 
   collisionHandler: (laser, asteroid) ->
     laser.kill()
@@ -71,10 +73,16 @@ class Game
     asteroid.kill()
     @updateScore(-10)
 
-  death: ->
+  death: (player, asteroid) ->
+    asteroid.kill()
     @playerDeath.play()
-    @music.stop()
-    @game.state.start('game_over')
+
+    if @lives == 0
+      @music.stop()
+      @game.state.start('game_over')
+    else
+      @lives -= 1
+      @livesText.text = "Lives: " + @lives
 
   updateScore: (points) ->
     @score += points * @scoreMultiplier
