@@ -7,8 +7,9 @@ class Game
     @score = 0
 
   create: ->
-    @game.add.sprite(0, 0, 'background')
     @game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    @background = @game.add.sprite(0, 0, 'background')
 
     @player = game.add.sprite(512,768-96, 'player')
     @game.physics.enable(@player)
@@ -39,6 +40,8 @@ class Game
 
     @scoreText = @game.add.text(8, 8, "Score: 0", {fill: "#ffffff"})
 
+    @checkLevel()
+
   update: ->
     if (@cursors.left.isDown)
       @player.body.velocity.x = -192
@@ -49,25 +52,10 @@ class Game
 
     if @spacebar.isDown
       unless (this.game.time.now - @lastBlastShotAt < @BLAST_DELAY)
-        blast = @lasers.create(@player.x + 32, 768-96-20, 'laserblast')
-        blast.body.velocity.y = -256
-        blast.checkWorldBounds = true
-        blast.outOfBoundsKill = true
-        @blast.play()
-        @lastBlastShotAt = this.game.time.now;
+        @fireLaser()
 
     if Math.random() < 0.01
-      x = Math.floor(Math.random() * 1024) + 1
-      xVelocity = Math.floor(Math.random() * 128) + 1 - 64
-      asteroid = @asteroids.create(x, 0, 'asteroid')
-      asteroid.body.velocity.y = 128
-      asteroid.body.velocity.x = xVelocity
-      asteroid.checkWorldBounds = true
-      asteroid.outOfBoundsKill = true
-      asteroid.anchor.setTo(0.5, 0.5);
-      asteroid.body.angularVelocity = Math.floor(Math.random() * 128) + 1 - 64
-      colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0x00ffff, 0xff00ff]
-      asteroid.tint = colors[Math.floor(Math.random() * colors.length)]
+      @spawnAsteroid()
 
     game.physics.arcade.overlap(@lasers, @asteroids, @collisionHandler, null, this);
     game.physics.arcade.overlap(@ground, @asteroids, @groundHandler, null, this);
@@ -77,17 +65,61 @@ class Game
     laser.kill()
     asteroid.kill()
     @explosion.play()
-    @score += 100
-    @scoreText.text = "Score: " + @score
+    @updateScore(+20)
 
   groundHandler: (ground, asteroid) ->
     asteroid.kill()
-    @score -= 100
-    @scoreText.text = "Score: " + @score
+    @updateScore(-10)
 
-  death: (player, asteroid) ->
+  death: ->
     @playerDeath.play()
     @music.stop()
     @game.state.start('game_over')
+
+  updateScore: (points) ->
+    @score += points * @scoreMultiplier
+    @scoreText.text = "Score: " + @score
+    @checkLevel()
+
+  checkLevel: ->
+    if @score >= 1000000
+      @scoreMultiplier = 6
+      @background.tint = 0x333333
+    else if 50000 <= @score < 100000
+      @scoreMultiplier = 5
+      @background.tint = 0xcccccc
+    else if 20000 <= @score < 50000
+      @scoreMultiplier = 4
+      @background.tint = 0x00ffff
+    else if 5000 <= @score < 20000
+      @scoreMultiplier = 3
+      @background.tint = 0xff00ff
+    else if 1000 <= @score < 5000
+      @scoreMultiplier = 2
+      @background.tint = 0x0000ff
+    else if @score < 1000
+      @scoreMultiplier = 1
+      @background.tint = 0x999999
+
+  spawnAsteroid: ->
+    x = Math.floor(Math.random() * 1024) + 1
+    xVelocity = Math.floor(Math.random() * 128) + 1 - 64
+    asteroid = @asteroids.create(x, 0, 'asteroid')
+    asteroid.body.velocity.y = 128
+    asteroid.body.velocity.x = xVelocity
+    asteroid.checkWorldBounds = true
+    asteroid.outOfBoundsKill = true
+    asteroid.anchor.setTo(0.5, 0.5);
+    asteroid.body.angularVelocity = Math.floor(Math.random() * 128) + 1 - 64
+    colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0x00ffff, 0xff00ff]
+    asteroid.tint = colors[Math.floor(Math.random() * colors.length)]
+
+  fireLaser: ->
+    blast = @lasers.create(@player.x + 32, 768-96-20, 'laserblast')
+    blast.body.velocity.y = -256
+    blast.checkWorldBounds = true
+    blast.outOfBoundsKill = true
+    @blast.play()
+    @lastBlastShotAt = this.game.time.now;
 
 exports.Game = Game
