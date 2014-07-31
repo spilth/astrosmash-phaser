@@ -83,6 +83,7 @@ class Game
     else
       @lives -= 1
       @livesText.text = "Lives: " + @lives
+      updateScore(-100)
 
   updateScore: (points) ->
     @score += points * @scoreMultiplier
