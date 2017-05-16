@@ -4,6 +4,7 @@ class Game
   constructor: (@game) ->
     @player = null
     @BLAST_DELAY = 400
+    @PLAYER_VELOCITY = 256
     @score = 0
     @lives = 3
 
@@ -22,17 +23,17 @@ class Game
     @cursors = @game.input.keyboard.createCursorKeys()
     @spacebar = @game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 
-    @asteroids = game.add.group()
-    @asteroids.enableBody = true
-    @asteroids.physicsBodyType = Phaser.Physics.ARCADE;
+    @asteroidGroup = game.add.group()
+    @asteroidGroup.enableBody = true
+    @asteroidGroup.physicsBodyType = Phaser.Physics.ARCADE;
 
-    @lasers = game.add.group()
-    @lasers.enableBody = true
-    @lasers.physicsBodyType = Phaser.Physics.ARCADE;
+    @laserGroup = game.add.group()
+    @laserGroup.enableBody = true
+    @laserGroup.physicsBodyType = Phaser.Physics.ARCADE;
 
-    @blast = @game.add.sound('laser')
-    @explosion = @game.add.sound('explosion')
-    @playerDeath = @game.add.sound('death')
+    @laserSound = @game.add.sound('laser')
+    @explosionSound = @game.add.sound('explosion')
+    @deathSound = @game.add.sound('death')
 
     @music = @game.add.sound('music', 1, true)
     @music.play()
@@ -42,13 +43,13 @@ class Game
     @scoreText = @game.add.text(8, 8, "Score: 0", {fill: "#ffffff"})
     @livesText = @game.add.text(896, 8, "Lives: 3", {fill: "#ffffff"})
 
-    @checkLevel()
+    @adjustBackgroundAndScoreMultiplier()
 
   update: ->
     if (@cursors.left.isDown)
-      @player.body.velocity.x = -192
+      @player.body.velocity.x = -@PLAYER_VELOCITY
     else if (@cursors.right.isDown)
-      @player.body.velocity.x = 192
+      @player.body.velocity.x = @PLAYER_VELOCITY
     else
       @player.body.velocity.x = 0
 
@@ -59,23 +60,23 @@ class Game
     if Math.random() < 0.01
       @spawnAsteroid()
 
-    @game.physics.arcade.overlap(@lasers, @asteroids, @collisionHandler, null, this);
-    @game.physics.arcade.overlap(@ground, @asteroids, @groundHandler, null, this);
-    @game.physics.arcade.overlap(@player, @asteroids, @death, null, this);
+    @game.physics.arcade.overlap(@laserGroup, @asteroidGroup, @asteroidLaserCollision, null, this)
+    @game.physics.arcade.overlap(@ground, @asteroidGroup, @asteroidGroundCollision, null, this)
+    @game.physics.arcade.overlap(@player, @asteroidGroup, @asteroidPlayerCollision, null, this)
 
-  collisionHandler: (laser, asteroid) ->
+  asteroidLaserCollision: (laser, asteroid) ->
     laser.kill()
     asteroid.kill()
-    @explosion.play()
+    @explosionSound.play()
     @updateScore(+20)
 
-  groundHandler: (ground, asteroid) ->
+  asteroidGroundCollision: (ground, asteroid) ->
     asteroid.kill()
     @updateScore(-10)
 
-  death: (player, asteroid) ->
+  asteroidPlayerCollision: (player, asteroid) ->
     asteroid.kill()
-    @playerDeath.play()
+    @deathSound.play()
 
     if @lives == 0
       @music.stop()
@@ -83,14 +84,14 @@ class Game
     else
       @lives -= 1
       @livesText.text = "Lives: " + @lives
-      updateScore(-100)
+      @updateScore(-100)
 
   updateScore: (points) ->
     @score += points * @scoreMultiplier
     @scoreText.text = "Score: " + @score
-    @checkLevel()
+    @adjustBackgroundAndScoreMultiplier()
 
-  checkLevel: ->
+  adjustBackgroundAndScoreMultiplier: ->
     if @score >= 1000000
       @scoreMultiplier = 6
       @background.tint = 0x333333
@@ -113,7 +114,7 @@ class Game
   spawnAsteroid: ->
     x = Math.floor(Math.random() * 1024) + 1
     xVelocity = Math.floor(Math.random() * 128) + 1 - 64
-    asteroid = @asteroids.create(x, 0, 'asteroid')
+    asteroid = @asteroidGroup.create(x, 0, 'asteroid')
     asteroid.body.velocity.y = 128
     asteroid.body.velocity.x = xVelocity
     asteroid.checkWorldBounds = true
@@ -124,11 +125,11 @@ class Game
     asteroid.tint = colors[Math.floor(Math.random() * colors.length)]
 
   fireLaser: ->
-    blast = @lasers.create(@player.x + 32, 768-96-20, 'laserblast')
+    blast = @laserGroup.create(@player.x + 32, 768-96-20, 'laserblast')
     blast.body.velocity.y = -256
     blast.checkWorldBounds = true
     blast.outOfBoundsKill = true
-    @blast.play()
     @lastBlastShotAt = this.game.time.now;
+    @laserSound.play()
 
 exports.Game = Game
